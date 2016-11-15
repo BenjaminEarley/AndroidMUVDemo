@@ -1,23 +1,26 @@
 package com.benjaminearley.githubapi
 
 import android.app.Application
-import com.facebook.stetho.Stetho
 
 
 class MyApp : Application() {
 
     companion object {
         lateinit var netComponent: NetComponent
-            private set
+        lateinit var gitHubComponent: GitHubComponent
     }
 
     override fun onCreate() {
         super.onCreate()
 
-        Stetho.initializeWithDefaults(this)
-
         netComponent = DaggerNetComponent.builder()
+                .appModule(AppModule(this))
                 .netModule(NetModule("https://api.github.com"))
+                .build()
+
+        gitHubComponent = DaggerGitHubComponent.builder()
+                .netComponent(netComponent)
+                .gitHubModule(GitHubModule())
                 .build()
 
     }

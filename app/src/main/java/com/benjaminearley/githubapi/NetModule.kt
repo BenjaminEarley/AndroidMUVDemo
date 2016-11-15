@@ -1,5 +1,7 @@
 package com.benjaminearley.githubapi
 
+import android.app.Application
+import com.facebook.stetho.Stetho
 import com.facebook.stetho.okhttp3.StethoInterceptor
 import com.google.gson.FieldNamingPolicy
 import com.google.gson.Gson
@@ -8,17 +10,20 @@ import com.jakewharton.retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import dagger.Module
 import dagger.Provides
 import okhttp3.Interceptor
+import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import javax.inject.Singleton
-import okhttp3.OkHttpClient
 
 @Module
 class NetModule(private var baseUrl: String) {
 
     @Provides
     @Singleton
-    fun provideStethoInterceptor(): Interceptor = StethoInterceptor()
+    fun provideStethoInterceptor(application: Application): Interceptor {
+        Stetho.initializeWithDefaults(application)
+        return StethoInterceptor()
+    }
 
     @Provides
     @Singleton
@@ -34,7 +39,7 @@ class NetModule(private var baseUrl: String) {
 
     @Provides
     @Singleton
-    internal fun provideRetrofit(gson: Gson, okHttpClient: OkHttpClient): Retrofit {
+    fun provideRetrofit(gson: Gson, okHttpClient: OkHttpClient): Retrofit {
         val retrofit = Retrofit.Builder()
                 .addConverterFactory(GsonConverterFactory.create(gson))
                 .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
