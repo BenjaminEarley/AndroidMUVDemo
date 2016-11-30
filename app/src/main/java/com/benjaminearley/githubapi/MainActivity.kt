@@ -1,12 +1,14 @@
 package com.benjaminearley.githubapi
 
 import android.os.Bundle
+import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
 import android.view.View
 import android.widget.ProgressBar
 import android.widget.TextView
 import com.benjaminearley.githubapi.GitHubModule.GitHubApiInterface
 import com.jakewharton.rxrelay2.BehaviorRelay
+import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
@@ -50,22 +52,23 @@ class MainActivity : AppCompatActivity() {
                                         .getUser("BenjaminEarley")
                                         .subscribeOn(Schedulers.io())
                                         .delay(3, TimeUnit.SECONDS) // Here to emulate a long running process
+                                        //.flatMap { Single.error<User>(Throwable()) } //emulate error
                                         .observeOn(AndroidSchedulers.mainThread())
                                         .doOnSubscribe {
-                                            model.viewModel.progressVisible = true
+                                            model.viewModel.isProgressBarVisible = true
                                             model.viewUpdates.accept(Unit)
                                         }
                                         .subscribe({ user ->
-                                            model.viewModel.user = Some(user)
-                                            model.viewModel.progressVisible = false
+                                            model.viewModel.userResult = UserResult.Some(user)
+                                            model.viewModel.isProgressBarVisible = false
 
                                             model.viewUpdates.accept(Unit)
 
                                             model.networkModel?.dispose()
                                             model.networkModel = null
                                         }, { error ->
-                                            model.viewModel.user = None()
-                                            model.viewModel.progressVisible = false
+                                            model.viewModel.userResult = UserResult.Error(error)
+                                            model.viewModel.isProgressBarVisible = false
 
                                             model.viewUpdates.accept(Unit)
 
@@ -83,8 +86,8 @@ class MainActivity : AppCompatActivity() {
                                     it.dispose()
                                     model.networkModel = null
                                 }
-                                model.viewModel.user = None()
-                                model.viewModel.progressVisible = false
+                                model.viewModel.userResult = UserResult.None()
+                                model.viewModel.isProgressBarVisible = false
 
                                 model.viewUpdates.accept(Unit)
                             }
@@ -108,15 +111,28 @@ class MainActivity : AppCompatActivity() {
         lastCustomNonConfigurationInstance?.let {
             model = it as Model
         } ?: {
-            model = Model(BehaviorRelay.createDefault(Unit), ViewModel(None(), false), null)
+            model = Model(BehaviorRelay.createDefault(Unit), ViewModel(UserResult.None(), false), null)
         }()
 
         disposable = model.viewUpdates.subscribe {
-            message.text = model.viewModel.user.with(
-                    User::toString,
-                    { null })
+            message.text = model.viewModel.userResult.with(
+                    none = { null },
+                    some = User::toString,
+                    error = { null })
 
-            progressBar.visibility = if (model.viewModel.progressVisible) View.VISIBLE else View.GONE
+            model.viewModel.userResult.with(
+                    none = { },
+                    some = { },
+                    error = {
+                        AlertDialog
+                                .Builder(this)
+                                .setMessage(R.string.error)
+                                .setPositiveButton(R.string.ok, null)
+                                .setOnDismissListener { model.viewModel.userResult = UserResult.None() }
+                                .show()
+                        Unit })
+
+            progressBar.visibility = if (model.viewModel.isProgressBarVisible) View.VISIBLE else View.GONE
         }
     }
 
