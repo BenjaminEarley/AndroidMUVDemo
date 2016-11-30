@@ -1,0 +1,14 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    package="com.benjaminearley.githubapi">
+
+    <uses-permission android:name="android.permission.ACCESS_MOCK_LOCATION" />
+
+    <application
+        android:name=".MyApp"
+        tools:replace="android:name"
+        android:networkSecurityConfig="@xml/network_security_config">
+
+    </application>
+
+</manifest>
