@@ -1,6 +1,7 @@
-package com.benjaminearley.githubapi
+package com.benjaminearley.githubapi.modelViewOnly
 
 import android.view.View
+import com.benjaminearley.githubapi.User
 
 
 sealed class UserResult {
