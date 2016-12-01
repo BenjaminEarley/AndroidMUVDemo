@@ -3,24 +3,17 @@ package com.benjaminearley.githubapi
 import android.os.Bundle
 import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
-import android.text.Editable
 import android.text.InputType
-import android.text.TextWatcher
 import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
-import android.widget.EditText
-import android.widget.ProgressBar
-import android.widget.TextView
 import com.benjaminearley.githubapi.GitHubModule.GitHubApiInterface
-import com.jakewharton.rxrelay2.BehaviorRelay
-import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
 import org.jetbrains.anko.*
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
+
 
 class MainActivity : AppCompatActivity() {
 
