@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
 import android.text.Editable
+import android.text.InputType
 import android.text.TextWatcher
 import android.view.Gravity
 import android.view.View
@@ -48,6 +49,8 @@ class MainActivity : AppCompatActivity() {
                     verticalLayout {
                         gravity = Gravity.CENTER_HORIZONTAL
                         userName = editText {
+                            maxLines = 1
+                            inputType = InputType.TYPE_CLASS_TEXT
 
                             textChangedListener {
                                 onTextChanged { text, start, before, count ->
@@ -103,6 +106,8 @@ class MainActivity : AppCompatActivity() {
                                     }
                                     model.viewModel.userResult = UserResult.None()
                                     model.viewModel.isProgressBarVisible = false
+                                    model.viewModel.userName = ""
+                                    model.viewModel.cursorPosition = 0
 
                                     model.viewUpdates.accept(Unit)
                                 }
