@@ -50,7 +50,7 @@ class MainActivity : AppCompatActivity() {
                         gravity = Gravity.CENTER_HORIZONTAL
                         userName = editText {
                             maxLines = 1
-                            inputType = InputType.TYPE_CLASS_TEXT
+                            inputType = InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS
 
                             textChangedListener {
                                 onTextChanged { text, start, before, count ->
@@ -134,6 +134,9 @@ class MainActivity : AppCompatActivity() {
             model = Model(BehaviorRelay.createDefault(Unit), ViewModel(UserResult.None(), false, "BenjaminEarley", 0), null)
         }()
 
+        userName.setText(model.viewModel.userName)
+        userName.setSelection(model.viewModel.cursorPosition)
+
         disposable = model.viewUpdates.subscribe {
             response.text = model.viewModel.userResult.with(
                     none = { null },
@@ -151,10 +154,6 @@ class MainActivity : AppCompatActivity() {
                                 .setOnDismissListener { model.viewModel.userResult = UserResult.None() }
                                 .show()
                         Unit })
-
-            userName.setText(model.viewModel.userName)
-
-            userName.setSelection(model.viewModel.cursorPosition)
 
             progressBar.visibility = if (model.viewModel.isProgressBarVisible) View.VISIBLE else View.GONE
         }
