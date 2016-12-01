@@ -29,7 +29,7 @@ class MainActivity : AppCompatActivity() {
         lastCustomNonConfigurationInstance?.let {
             model = it as Model
         } ?: {
-            val context = this.applicationContext
+            val context = this
             model = Model(ViewModel(relativeLayout {
 
                 val response = textView().lparams {
@@ -41,9 +41,9 @@ class MainActivity : AppCompatActivity() {
                 val progressBar = progressBar {
                     visibility = View.GONE
                 }.lparams {
-                    alignParentEnd()
-                    alignParentBottom()
                     margin = dip(8)
+                    alignParentRight()
+                    alignParentBottom()
                 }
 
                 verticalLayout {

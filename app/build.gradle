@@ -22,7 +22,7 @@ android {
     buildToolsVersion "25.0.1"
     defaultConfig {
         applicationId "com.benjaminearley.githubapi"
-        minSdkVersion 21
+        minSdkVersion 15
         targetSdkVersion 25
         versionCode versionMajor * 1000000 + versionMinor * 10000 + versionPatch * 100 + versionBuild
         versionName "${versionMajor}.${versionMinor}.${versionPatch}"
@@ -66,6 +66,6 @@ dependencies {
     compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     compile 'com.google.dagger:dagger:2.7'
     compile 'com.jakewharton.rxrelay2:rxrelay:2.0.0'
-    compile 'org.jetbrains.anko:anko-sdk21:0.9'
+    compile 'org.jetbrains.anko:anko-sdk15:0.9'
     compile 'org.jetbrains.anko:anko-appcompat-v7:0.9'
 }
