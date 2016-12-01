@@ -29,7 +29,6 @@ class MainActivity : AppCompatActivity() {
         lastCustomNonConfigurationInstance?.let {
             model = it as Model
         } ?: {
-            val context = this
             model = Model(ViewModel(relativeLayout {
 
                 val response = textView().lparams {
@@ -78,7 +77,7 @@ class MainActivity : AppCompatActivity() {
                                             progressBar.visibility = View.GONE
 
                                             AlertDialog
-                                                    .Builder(context)
+                                                    .Builder(model.activity!!)
                                                     .setMessage(error.toString())
                                                     .setPositiveButton(R.string.ok, null)
                                                     .show()
@@ -103,8 +102,10 @@ class MainActivity : AppCompatActivity() {
                     }.lparams { margin = dip(8) }
                 }.lparams(width = dip(280)) { centerInParent() }
 
-            }), null)
+            }), null, null)
         }()
+
+        model.activity = this
 
         setContentView(model.viewModel.view)
     }
