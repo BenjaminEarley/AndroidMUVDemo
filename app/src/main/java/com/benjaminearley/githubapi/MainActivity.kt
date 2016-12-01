@@ -8,6 +8,7 @@ import android.text.InputType
 import android.text.TextWatcher
 import android.view.Gravity
 import android.view.View
+import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.ProgressBar
 import android.widget.TextView
@@ -26,146 +27,101 @@ class MainActivity : AppCompatActivity() {
     @Inject
     lateinit var gitHubApiInterface: GitHubApiInterface
     lateinit var model: Model
-    lateinit var disposable: Disposable
-    lateinit var response: TextView
-    lateinit var userName: EditText
-    lateinit var progressBar: ProgressBar
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        //// View
-
-        setContentView(
-
-                relativeLayout {
-
-                    response = textView().lparams {
-                        margin = dip(32)
-                        alignParentTop()
-                        centerHorizontally()
-                    }
-
-                    verticalLayout {
-                        gravity = Gravity.CENTER_HORIZONTAL
-                        userName = editText {
-                            maxLines = 1
-                            inputType = InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS
-
-                            textChangedListener {
-                                onTextChanged { text, start, before, count ->
-                                    model.viewModel.userName = text.toString()
-                                }
-                            }
-
-                        }.lparams(width = matchParent) { margin = dip(8) }
-
-                        linearLayout {
-                            button {
-                                text = getString(R.string.send)
-
-                                onClick {
-                                    if (model.networkModel != null) return@onClick
-                                    model.networkModel = gitHubApiInterface
-                                            .getUser(model.viewModel.userName ?: "")
-                                            .subscribeOn(Schedulers.io())
-                                            .delay(3, TimeUnit.SECONDS) // Here to emulate a long running process
-                                            //.flatMap { Single.error<User>(Throwable()) } //emulate error
-                                            .observeOn(AndroidSchedulers.mainThread())
-                                            .doOnSubscribe {
-                                                model.viewModel.isProgressBarVisible = true
-                                                model.viewUpdates.accept(Unit)
-                                            }
-                                            .subscribe({ user ->
-                                                model.viewModel.userResult = UserResult.Some(user)
-                                                model.viewModel.isProgressBarVisible = false
-
-                                                model.viewUpdates.accept(Unit)
-
-                                                model.networkModel?.dispose()
-                                                model.networkModel = null
-                                            }, { error ->
-                                                model.viewModel.userResult = UserResult.Error(error)
-                                                model.viewModel.isProgressBarVisible = false
-
-                                                model.viewUpdates.accept(Unit)
-
-                                                model.networkModel?.dispose()
-                                                model.networkModel = null
-                                            })
-                                }
-                            }.lparams { margin = dip(8) }
-
-                            button {
-                                text = getString(R.string.clear)
-
-                                onClick {
-                                    model.networkModel?.let {
-                                        it.dispose()
-                                        model.networkModel = null
-                                    }
-                                    model.viewModel.userResult = UserResult.None()
-                                    model.viewModel.isProgressBarVisible = false
-                                    model.viewModel.userName = ""
-                                    model.viewModel.cursorPosition = 0
-
-                                    model.viewUpdates.accept(Unit)
-                                }
-                            }.lparams { margin = dip(8) }
-                        }.lparams { margin = dip(8) }
-                    }.lparams(width = dip(280)) { centerInParent() }
-
-                    progressBar = progressBar {
-                        visibility = View.GONE
-                    }.lparams {
-                        alignParentEnd()
-                        alignParentBottom()
-                        margin = dip(8)
-                    }
-                })
-
         MyApp.gitHubComponent.inject(this)
-
-        //// Update
 
         lastCustomNonConfigurationInstance?.let {
             model = it as Model
         } ?: {
-            model = Model(BehaviorRelay.createDefault(Unit), ViewModel(UserResult.None(), false, "BenjaminEarley", 0), null)
+            val context = this.applicationContext
+            model = Model(ViewModel(relativeLayout {
+
+                val response = textView().lparams {
+                    margin = dip(32)
+                    alignParentTop()
+                    centerHorizontally()
+                }
+
+                val progressBar = progressBar {
+                    visibility = View.GONE
+                }.lparams {
+                    alignParentEnd()
+                    alignParentBottom()
+                    margin = dip(8)
+                }
+
+                verticalLayout {
+                    gravity = Gravity.CENTER_HORIZONTAL
+                    val userName = editText {
+                        maxLines = 1
+                        inputType = InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS
+                    }.lparams(width = matchParent) { margin = dip(8) }
+
+                    linearLayout {
+                        button {
+                            text = getString(R.string.send)
+
+                            onClick {
+                                if (model.networkModel != null) return@onClick
+                                model.networkModel = gitHubApiInterface
+                                        .getUser(userName.text.toString())
+                                        .subscribeOn(Schedulers.io())
+                                        .delay(3, TimeUnit.SECONDS) // Here to emulate a long running process
+                                        //.flatMap { Single.error<User>(Throwable()) } //emulate error
+                                        .observeOn(AndroidSchedulers.mainThread())
+                                        .doOnSubscribe {
+                                            progressBar.visibility = View.VISIBLE
+                                        }
+                                        .subscribe({ user ->
+                                            progressBar.visibility = View.GONE
+                                            response.text = user.toString()
+
+                                            model.networkModel?.dispose()
+                                            model.networkModel = null
+                                        }, { error ->
+                                            progressBar.visibility = View.GONE
+
+                                            AlertDialog
+                                                    .Builder(context)
+                                                    .setMessage(error.toString())
+                                                    .setPositiveButton(R.string.ok, null)
+                                                    .show()
+
+                                            model.networkModel?.dispose()
+                                            model.networkModel = null
+                                        })
+                            }
+                        }.lparams { margin = dip(8) }
+
+                        button {
+                            text = getString(R.string.clear)
+
+                            onClick {
+                                userName.setText("")
+                                model.networkModel?.let {
+                                    it.dispose()
+                                    model.networkModel = null
+                                }
+                            }
+                        }.lparams { margin = dip(8) }
+                    }.lparams { margin = dip(8) }
+                }.lparams(width = dip(280)) { centerInParent() }
+
+            }), null)
         }()
 
-        userName.setText(model.viewModel.userName)
-        userName.setSelection(model.viewModel.cursorPosition)
-
-        disposable = model.viewUpdates.subscribe {
-            response.text = model.viewModel.userResult.with(
-                    none = { null },
-                    some = User::toString,
-                    error = { null })
-
-            model.viewModel.userResult.with(
-                    none = { },
-                    some = { },
-                    error = {
-                        AlertDialog
-                                .Builder(this)
-                                .setMessage(R.string.error)
-                                .setPositiveButton(R.string.ok, null)
-                                .setOnDismissListener { model.viewModel.userResult = UserResult.None() }
-                                .show()
-                        Unit })
-
-            progressBar.visibility = if (model.viewModel.isProgressBarVisible) View.VISIBLE else View.GONE
-        }
+        setContentView(model.viewModel.view)
     }
 
     override fun onDestroy() {
-        disposable.dispose()
 
         if (isFinishing) {
             model.networkModel?.dispose()
         } else {
-            model.viewModel.cursorPosition = userName.selectionStart
+            (model.viewModel.view.parent as ViewGroup).removeView(model.viewModel.view)
         }
 
         super.onDestroy()

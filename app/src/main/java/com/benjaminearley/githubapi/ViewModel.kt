@@ -1,5 +1,7 @@
 package com.benjaminearley.githubapi
 
+import android.view.View
+
 
 sealed class UserResult {
     class None() : UserResult() {
@@ -17,4 +19,4 @@ sealed class UserResult {
     abstract fun <D> with(none: (Unit) -> D, some: (User) -> D, error: (Throwable) -> D): D
 }
 
-class ViewModel(var userResult: UserResult, var isProgressBarVisible: Boolean, var userName: String?, var cursorPosition: Int)
+class ViewModel(var view: View)
