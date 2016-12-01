@@ -17,4 +17,4 @@ sealed class UserResult {
     abstract fun <D> with(none: (Unit) -> D, some: (User) -> D, error: (Throwable) -> D): D
 }
 
-class ViewModel(var userResult: UserResult, var isProgressBarVisible: Boolean)
+class ViewModel(var userResult: UserResult, var isProgressBarVisible: Boolean, var userName: String?, var cursorPosition: Int)
