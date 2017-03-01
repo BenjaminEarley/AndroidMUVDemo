@@ -1,21 +1,14 @@
 package com.benjaminearley.githubapi.modelUpdateView
 
 import com.benjaminearley.githubapi.data.User
+import com.benjaminearley.githubapi.functional.algebraicDataTypes.Sum3
+import com.benjaminearley.githubapi.functional.algebraicDataTypes.Sum3A
+import com.benjaminearley.githubapi.functional.algebraicDataTypes.Sum3B
+import com.benjaminearley.githubapi.functional.algebraicDataTypes.Sum3C
 
-sealed class UserResult {
-    class None() : UserResult() {
-        override fun <D> with(b: (Unit) -> D, a: (User) -> D, c: (Throwable) -> D): D = b(Unit)
-    }
-
-    class Some(val user: User) : UserResult() {
-        override fun <D> with(b: (Unit) -> D, a: (User) -> D, c: (Throwable) -> D): D = a(user)
-    }
-
-    class Error(val error: Throwable) : UserResult() {
-        override fun <D> with(b: (Unit) -> D, a: (User) -> D, c: (Throwable) -> D): D = c(error)
-    }
-
-    abstract fun <D> with(none: (Unit) -> D, some: (User) -> D, error: (Throwable) -> D): D
-}
+typealias UserResult = Sum3<Unit, User, Throwable>
+fun UserResultOfNone(): UserResult = Sum3A(Unit)
+fun UserResultOfSome(user: User): UserResult = Sum3B(user)
+fun UserResultOfError(error: Throwable): UserResult = Sum3C(error)
 
 class ViewModel(var userResult: UserResult, var isProgressBarVisible: Boolean, var userName: String?, var cursorPosition: Int)

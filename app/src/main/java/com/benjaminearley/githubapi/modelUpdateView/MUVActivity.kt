@@ -53,7 +53,7 @@ class MUVActivity : AppCompatActivity() {
                             inputType = InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS
 
                             textChangedListener {
-                                onTextChanged { text, start, before, count ->
+                                onTextChanged { text, _, _, _ ->
                                     model.viewModel.userName = text.toString()
                                 }
                             }
@@ -77,7 +77,7 @@ class MUVActivity : AppCompatActivity() {
                                                 model.viewUpdates.accept(Unit)
                                             }
                                             .subscribe({ user ->
-                                                model.viewModel.userResult = UserResult.Some(user)
+                                                model.viewModel.userResult = UserResultOfSome(user)
                                                 model.viewModel.isProgressBarVisible = false
 
                                                 model.viewUpdates.accept(Unit)
@@ -85,7 +85,7 @@ class MUVActivity : AppCompatActivity() {
                                                 model.networkModel?.dispose()
                                                 model.networkModel = null
                                             }, { error ->
-                                                model.viewModel.userResult = UserResult.Error(error)
+                                                model.viewModel.userResult = UserResultOfError(error)
                                                 model.viewModel.isProgressBarVisible = false
 
                                                 model.viewUpdates.accept(Unit)
@@ -104,7 +104,7 @@ class MUVActivity : AppCompatActivity() {
                                         it.dispose()
                                         model.networkModel = null
                                     }
-                                    model.viewModel.userResult = UserResult.None()
+                                    model.viewModel.userResult = UserResultOfNone()
                                     model.viewModel.isProgressBarVisible = false
                                     userName.setText("")
 
@@ -130,7 +130,7 @@ class MUVActivity : AppCompatActivity() {
         lastCustomNonConfigurationInstance?.let {
             model = it as Model
         } ?: {
-            model = Model(BehaviorRelay.createDefault(Unit), ViewModel(UserResult.None(), false, "BenjaminEarley", 0), null)
+            model = Model(BehaviorRelay.createDefault(Unit), ViewModel(UserResultOfNone(), false, "BenjaminEarley", 0), null)
         }()
 
         userName.setText(model.viewModel.userName)
@@ -138,19 +138,19 @@ class MUVActivity : AppCompatActivity() {
 
         disposable = model.viewUpdates.subscribe {
             response.text = model.viewModel.userResult.with(
-                    none = { null },
-                    some = User::toString,
-                    error = { null })
+                    { null },
+                    User::toString,
+                    { null })
 
             model.viewModel.userResult.with(
-                    none = { },
-                    some = { },
-                    error = {
+                    { },
+                    { },
+                    {
                         AlertDialog
                                 .Builder(this)
                                 .setMessage(R.string.error)
                                 .setPositiveButton(R.string.ok, null)
-                                .setOnDismissListener { model.viewModel.userResult = UserResult.None() }
+                                .setOnDismissListener { model.viewModel.userResult = UserResultOfNone() }
                                 .show()
                         Unit })
 
