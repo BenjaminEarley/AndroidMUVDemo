@@ -1,5 +1,6 @@
 package com.benjaminearley.githubapi.modelUpdateView
 
+
 import android.os.Bundle
 import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
@@ -21,7 +22,7 @@ import org.jetbrains.anko.*
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
-class MainActivity : AppCompatActivity() {
+class MUVActivity : AppCompatActivity() {
 
     @Inject
     lateinit var gitHubApiInterface: GitHubApiInterface
@@ -35,7 +36,6 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
 
         //// View
-
         setContentView(
 
                 relativeLayout {

@@ -22,7 +22,7 @@ android {
     buildToolsVersion "25.0.2"
     defaultConfig {
         applicationId "com.benjaminearley.githubapi"
-        minSdkVersion 15
+        minSdkVersion 16
         targetSdkVersion 25
         versionCode versionMajor * 1000000 + versionMinor * 10000 + versionPatch * 100 + versionBuild
         versionName "${versionMajor}.${versionMinor}.${versionPatch}"
@@ -53,16 +53,16 @@ dependencies {
     kapt 'com.google.dagger:dagger-compiler:2.9'
     provided 'javax.annotation:jsr250-api:1.0'
     compile 'com.google.code.gson:gson:2.8.0'
-    compile 'com.android.support:appcompat-v7:25.1.1'
+    compile 'com.android.support:appcompat-v7:25.2.0'
     testCompile 'junit:junit:4.12'
     compile 'io.reactivex.rxjava2:rxjava:2.0.6'
     compile 'io.reactivex.rxjava2:rxandroid:2.0.1'
     compile 'com.squareup.okhttp3:okhttp:3.6.0'
     compile 'com.facebook.stetho:stetho:1.4.2'
     compile 'com.facebook.stetho:stetho-okhttp3:1.4.2'
-    compile 'com.squareup.retrofit2:retrofit:2.1.0'
-    compile 'com.squareup.retrofit2:converter-gson:2.1.0'
-    compile 'com.jakewharton.retrofit:retrofit2-rxjava2-adapter:1.0.0'
+    compile 'com.squareup.retrofit2:retrofit:2.2.0'
+    compile 'com.squareup.retrofit2:converter-gson:2.2.0'
+    compile 'com.squareup.retrofit2:adapter-rxjava2:2.2.0'
     compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     compile 'com.google.dagger:dagger:2.9'
     compile 'com.jakewharton.rxrelay2:rxrelay:2.0.0'

@@ -17,7 +17,7 @@ import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 
-class MainActivity : AppCompatActivity() {
+class ViewOnlyActiity : AppCompatActivity() {
 
     @Inject
     lateinit var gitHubApiInterface: GitHubApiInterface
