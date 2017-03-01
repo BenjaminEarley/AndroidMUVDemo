@@ -1,4 +1,4 @@
-package com.benjaminearley.githubapi
+package com.benjaminearley.githubapi.dagger
 
 import android.app.Application
 import com.facebook.stetho.Stetho

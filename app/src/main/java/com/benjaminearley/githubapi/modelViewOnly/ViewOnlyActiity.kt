@@ -7,7 +7,7 @@ import android.text.InputType
 import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
-import com.benjaminearley.githubapi.GitHubModule.GitHubApiInterface
+import com.benjaminearley.githubapi.dagger.GitHubModule.GitHubApiInterface
 import com.benjaminearley.githubapi.MyApp
 import com.benjaminearley.githubapi.R
 import io.reactivex.android.schedulers.AndroidSchedulers

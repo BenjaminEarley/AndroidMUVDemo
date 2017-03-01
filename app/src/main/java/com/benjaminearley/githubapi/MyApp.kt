@@ -1,6 +1,7 @@
 package com.benjaminearley.githubapi
 
 import android.app.Application
+import com.benjaminearley.githubapi.dagger.*
 
 
 class MyApp : Application() {

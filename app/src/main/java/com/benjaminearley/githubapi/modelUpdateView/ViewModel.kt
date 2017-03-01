@@ -1,6 +1,6 @@
 package com.benjaminearley.githubapi.modelUpdateView
 
-import com.benjaminearley.githubapi.User
+import com.benjaminearley.githubapi.data.User
 
 sealed class UserResult {
     class None() : UserResult() {

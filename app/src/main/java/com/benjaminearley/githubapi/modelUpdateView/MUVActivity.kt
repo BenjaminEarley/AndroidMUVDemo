@@ -10,10 +10,10 @@ import android.view.View
 import android.widget.EditText
 import android.widget.ProgressBar
 import android.widget.TextView
-import com.benjaminearley.githubapi.GitHubModule.GitHubApiInterface
+import com.benjaminearley.githubapi.dagger.GitHubModule.GitHubApiInterface
 import com.benjaminearley.githubapi.MyApp
 import com.benjaminearley.githubapi.R
-import com.benjaminearley.githubapi.User
+import com.benjaminearley.githubapi.data.User
 import com.jakewharton.rxrelay2.BehaviorRelay
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable

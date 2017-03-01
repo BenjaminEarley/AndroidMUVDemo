@@ -1,4 +1,4 @@
-package com.benjaminearley.githubapi
+package com.benjaminearley.githubapi.data
 
 import android.os.Parcel
 import android.os.Parcelable

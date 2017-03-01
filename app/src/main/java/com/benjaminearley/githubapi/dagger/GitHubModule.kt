@@ -1,5 +1,6 @@
-package com.benjaminearley.githubapi
+package com.benjaminearley.githubapi.dagger
 
+import com.benjaminearley.githubapi.data.User
 import dagger.Module
 import dagger.Provides
 import io.reactivex.Single
